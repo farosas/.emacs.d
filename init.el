@@ -5,8 +5,8 @@
   (normal-top-level-add-subdirs-to-load-path))
 
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "https://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+			 ("marmalade" . "https://marmalade-repo.org/packages/")
+			 ("melpa" . "http://melpa.milkbox.net/packages/")))
 
 (setq backup-directory-alist '((".*" . "~/.emacs.d/.temp")))
 
@@ -59,8 +59,8 @@
   "Copy the current buffer file name to the clipboard."
   (interactive)
   (let ((filename (if (equal major-mode 'dired-mode)
-                      default-directory
-                    (buffer-file-name))))
+		      default-directory
+		    (buffer-file-name))))
     (when filename
       (kill-new filename)
       (message "Copied buffer file name '%s' to the clipboard." filename))))
@@ -69,27 +69,27 @@
   "Removes file connected to current buffer and kills buffer."
   (interactive)
   (let ((filename (buffer-file-name))
-        (buffer (current-buffer))
-        (name (buffer-name)))
+	(buffer (current-buffer))
+	(name (buffer-name)))
     (if (not (and filename (file-exists-p filename)))
-        (ido-kill-buffer)
+	(ido-kill-buffer)
       (when (yes-or-no-p "Are you sure you want to remove this file? ")
-        (delete-file filename)
-        (kill-buffer buffer)
-        (message "File '%s' successfully removed" filename)))))
+	(delete-file filename)
+	(kill-buffer buffer)
+	(message "File '%s' successfully removed" filename)))))
 
 (defun dos2unix ()
   "Convert EOLs from dos to unix"
   (interactive)
-    (goto-char (point-min))
-      (while (search-forward "\r" nil t) (replace-match "")))
+  (goto-char (point-min))
+  (while (search-forward "\r" nil t) (replace-match "")))
 
 (defun eval-and-replace ()
   "Replace the preceding sexp with its value."
   (interactive)
   (backward-kill-sexp)
   (prin1 (eval (read (current-kill 0)))
-             (current-buffer)))
+	 (current-buffer)))
 
 (defun insert-date ()
   "Insert date at point."
@@ -97,7 +97,7 @@
 
 (defun install-required-package (pkg)
   (if (null (package-installed-p pkg))
-	  (package-install pkg)))
+      (package-install pkg)))
 
 (defun mrc-dired-do-command (command)
   "Run COMMAND on marked files. Any files not already open will be opened.
@@ -106,37 +106,37 @@ open and unsaved."
   (interactive "CRun on marked files M-x ")
   (save-window-excursion
     (mapc (lambda (filename)
-            (find-file filename)
-            (call-interactively command))
-          (dired-get-marked-files))))
+	    (find-file filename)
+	    (call-interactively command))
+	  (dired-get-marked-files))))
 
 (defun rename-current-buffer-file ()
   "Renames current buffer and file it is visiting."
   (interactive)
   (let ((name (buffer-name))
-        (filename (buffer-file-name)))
+	(filename (buffer-file-name)))
     (if (not (and filename (file-exists-p filename)))
-        (error "Buffer '%s' is not visiting a file!" name)
+	(error "Buffer '%s' is not visiting a file!" name)
       (let ((new-name (read-file-name "New name: " filename)))
-        (if (get-buffer new-name)
-            (error "A buffer named '%s' already exists!" new-name)
-          (rename-file filename new-name 1)
-          (rename-buffer new-name)
-          (set-visited-file-name new-name)
-          (set-buffer-modified-p nil)
-          (message "File '%s' successfully renamed to '%s'"
-                   name (file-name-nondirectory new-name)))))))
+	(if (get-buffer new-name)
+	    (error "A buffer named '%s' already exists!" new-name)
+	  (rename-file filename new-name 1)
+	  (rename-buffer new-name)
+	  (set-visited-file-name new-name)
+	  (set-buffer-modified-p nil)
+	  (message "File '%s' successfully renamed to '%s'"
+		   name (file-name-nondirectory new-name)))))))
 
 (defun uncamelcase ()
-(interactive)
-(progn (replace-regexp "\\([A-Z]\\)" "_\\1" nil (region-beginning)(region-end))
-       (downcase-region (region-beginning)(region-end))))
+  (interactive)
+  (progn (replace-regexp "\\([A-Z]\\)" "_\\1" nil (region-beginning)(region-end))
+	 (downcase-region (region-beginning)(region-end))))
 
 (defun unix2dos ()
-    "Convert EOLs from unix to dos"
+  "Convert EOLs from unix to dos"
   (interactive)
-    (goto-char (point-min))
-      (while (search-forward "\n" nil t) (replace-match "\r\n")))
+  (goto-char (point-min))
+  (while (search-forward "\n" nil t) (replace-match "\r\n")))
 
 ;;; Keybindings
 ;;--------------------------------------------------------------
@@ -161,23 +161,23 @@ open and unsaved."
 (global-set-key [(super h)] 'help-command)
 (global-set-key (kbd "C-z") nil)
 (global-set-key (kbd "M-j")
-            (lambda ()
-                  (interactive)
-                  (join-line -1)))
+		(lambda ()
+		  (interactive)
+		  (join-line -1)))
 
 ;;; Hooks
 ;;---------------------------------------------------------------------------------------
 (add-hook 'after-init-hook #'(lambda ()
-							   (package-initialize)
- 							   (install-required-package 'persp-mode)
- 							   (install-required-package 'multiple-cursors)
- 							   (install-required-package 'expand-region)))
+			       (package-initialize)
+			       (install-required-package 'persp-mode)
+			       (install-required-package 'multiple-cursors)
+			       (install-required-package 'expand-region)))
 
 ;;; Advices
 ;;---------------------------------------------------------------------------------------
 
 
-;;; Custom 
+;;; Custom
 ;;--------------------------------------------------------------
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -193,11 +193,11 @@ open and unsaved."
  '(persp-auto-save-opt 2)
  '(persp-filter-save-buffers-functions
    (quote
-	((lambda (b) (string-prefix-p " " (buffer-name b)))
-	 (lambda (b) (string-prefix-p "*" (buffer-name b)))
-	 (lambda (b) (string-prefix-p "/ssh" (buffer-name b))))))
+    ((lambda (b) (string-prefix-p " " (buffer-name b)))
+     (lambda (b) (string-prefix-p "*" (buffer-name b)))
+     (lambda (b) (string-prefix-p "/ssh" (buffer-name b))))))
  '(read-file-name-completion-ignore-case t)
- '(tab-width 4)
+ '(tab-width 8)
  '(web-mode-extra-snippets (quote ((nil ("slide" "<section>
 " . "
 </section>"))))))
