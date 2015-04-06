@@ -6,7 +6,7 @@
 (setq org-agenda-dim-blocked-tasks t)
 
 (setq org-clock-x11idle-program-name "xprintidle")
-(setq org-clock-idle-time 1)
+(setq org-clock-idle-time nil)
 
 (defun open-tasks-file ()
   (interactive)
