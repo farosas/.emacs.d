@@ -30,6 +30,7 @@
 (menu-bar-mode -1)
 (show-paren-mode)
 (fringe-mode 0)
+(global-subword-mode 1)
 
 ;;; Setqs
 ;;--------------------------------------------------------------
