@@ -173,6 +173,7 @@ open and unsaved."
 			       (install-required-package 'persp-mode)
 			       (install-required-package 'multiple-cursors)
 			       (install-required-package 'expand-region)))
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;;; Advices
 ;;---------------------------------------------------------------------------------------
