@@ -8,6 +8,9 @@
 (setq org-clock-x11idle-program-name "xprintidle")
 (setq org-clock-idle-time nil)
 
+(setq org-log-into-drawer t)
+(setq org-clock-into-drawer t)
+
 (defun open-tasks-file ()
   (interactive)
   (find-file tasks-file))
