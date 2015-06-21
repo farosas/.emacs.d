@@ -34,6 +34,7 @@
 
 ;;; Setqs
 ;;--------------------------------------------------------------
+(setq auto-save-default nil)
 (setq-default truncate-lines t)
 (set-display-table-slot standard-display-table 'truncation ? )
 (setq c-default-style "linux")
