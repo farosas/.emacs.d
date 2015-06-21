@@ -34,6 +34,8 @@
 
 ;;; Setqs
 ;;--------------------------------------------------------------
+(setq-default truncate-lines t)
+(set-display-table-slot standard-display-table 'truncation ? )
 (setq c-default-style "linux")
 (setq comment-style 'multi-line)
 (setq comment-style 'extra-line)
