@@ -41,6 +41,7 @@
 (setq comment-style 'multi-line)
 (setq comment-style 'extra-line)
 (setq tramp-default-method "ssh")
+(add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil))
 (setq persp-is-ibc-as-f-supported t)
 (add-to-list 'default-frame-alist '(font . "monospace-12"))
 (add-to-list 'default-frame-alist '(fullscreen . fullboth))
@@ -203,6 +204,7 @@ open and unsaved."
      (lambda (b) (string-prefix-p "/ssh" (buffer-name b))))))
  '(read-file-name-completion-ignore-case t)
  '(tab-width 8)
+ '(vc-handled-backends nil)
  '(web-mode-extra-snippets (quote ((nil ("slide" "<section>
 " . "
 </section>"))))))
