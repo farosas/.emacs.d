@@ -82,6 +82,9 @@
 (setq display-time-24hr-format t)
 (setq display-time-format nil)
 (display-time-mode)
+(setq scroll-step 1)
+(setq hscroll-margin 1)
+(setq hscroll-step 1)
 
 ;;; Functions
 ;;--------------------------------------------------------------
