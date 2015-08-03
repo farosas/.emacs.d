@@ -82,7 +82,6 @@
 (setq display-time-24hr-format t)
 (setq display-time-format nil)
 (display-time-mode)
-(display-battery-mode)
 
 ;;; Functions
 ;;--------------------------------------------------------------
