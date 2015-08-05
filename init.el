@@ -23,33 +23,7 @@
 (with-eval-after-load "persp-mode-autoloads"
   (setq wg-morph-on nil)
   (add-hook 'after-init-hook #'(lambda ()
-				 (persp-mode 1)))
-
-  (defun persp-tramp-save-buffer-file-name (b)
-    (let ((persp-tramp-file-name tramp-prefix-format)
-	  (tmh (tramp-compute-multi-hops (tramp-dissect-file-name (buffer-file-name b)))))
-      (while tmh
-	(let* ((hop (car tmh))
-	       (method   (tramp-file-name-method hop))
-	       (user     (tramp-file-name-user hop))
-	       (host     (tramp-file-name-host hop))
-	       (filename (tramp-file-name-localname hop)))
-	  (setq persp-tramp-file-name (concat
-				       persp-tramp-file-name
-				       method tramp-postfix-method-format
-				       user tramp-postfix-user-format
-				       host (if (= (string-width filename) 0)
-						tramp-postfix-hop-format
-					      (concat tramp-postfix-host-format filename)))
-		tmh (cdr tmh))))
-      persp-tramp-file-name))
-
-  (add-to-list 'persp-save-buffer-functions
-	       #'(lambda (b)
-		   (when (tramp-tramp-file-p (buffer-file-name b))
-		     `(def-buffer ,(buffer-name b)
-			,(persp-tramp-save-buffer-file-name b)
-			,(buffer-local-value 'major-mode b))))))
+				 (persp-mode 1))))
 (column-number-mode)
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
