@@ -60,6 +60,15 @@
 (setq hscroll-margin 1)
 (setq hscroll-step 1)
 
+;;; Macros
+;;--------------------------------------------------------------
+(fset 'breakpoint
+      (lambda (&optional arg) "Keyboard macro."
+	(interactive "p")
+	(kmacro-exec-ring-item
+	 (quote ([15 105 109 112 111 114 116 32 112 100 98 59 32 112 100 98 46 115 101 116 95 116 114 97 99 101 40 41 1] 0 "%d"))
+	 arg)))
+
 ;;; Functions
 ;;--------------------------------------------------------------
 (defun copy-file-name-to-clipboard ()
