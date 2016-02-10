@@ -5,6 +5,8 @@
 ;; Show blocked items in a dimmed font
 (setq org-agenda-dim-blocked-tasks t)
 
+(setq org-clock-in-switch-to-state "DOING")
+
 (setq org-x11idle-exists-p t)
 (setq org-clock-x11idle-program-name "/usr/local/bin/xprintidle")
 (setq org-clock-idle-time 15)
