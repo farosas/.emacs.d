@@ -1,5 +1,3 @@
-;;; Paths
-;;--------------------------------------------------------------
 (let ((default-directory "~/.emacs.d/site-lisp"))
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path))
@@ -10,12 +8,8 @@
 
 (setq backup-directory-alist '((".*" . "~/.emacs.d/.temp")))
 
-;;; Load
-;;---------------------------------------------------------------------------------------
 (load "org-mode-confs.el")
 
-;;; Modes
-;;--------------------------------------------------------------
 (with-eval-after-load "persp-mode-autoloads"
   (setq wg-morph-on nil)
   (add-hook 'after-init-hook #'(lambda ()
@@ -28,8 +22,6 @@
 (fringe-mode 0)
 (global-subword-mode 1)
 
-;;; Setqs
-;;--------------------------------------------------------------
 (setq auto-save-default nil)
 (setq-default truncate-lines t)
 (set-display-table-slot standard-display-table 'truncation ? )
@@ -56,8 +48,7 @@
 (setq hscroll-margin 1)
 (setq hscroll-step 1)
 
-;;; Macros
-;;--------------------------------------------------------------
+;; macros
 (fset 'breakpoint
       (lambda (&optional arg) "Keyboard macro."
 	(interactive "p")
@@ -65,8 +56,7 @@
 	 (quote ([15 105 109 112 111 114 116 32 112 100 98 59 32 112 100 98 46 115 101 116 95 116 114 97 99 101 40 41 1] 0 "%d"))
 	 arg)))
 
-;;; Functions
-;;--------------------------------------------------------------
+;; functions
 (defun copy-file-name-to-clipboard ()
   "Copy the current buffer file name to the clipboard."
   (interactive)
@@ -166,8 +156,7 @@ open and unsaved."
   (goto-char (point-min))
   (while (search-forward "\n" nil t) (replace-match "\r\n")))
 
-;;; Keybindings
-;;--------------------------------------------------------------
+;; key bindings
 (global-set-key (kbd "C-x p p") 'persp-switch)
 (global-set-key (kbd "C-x p a") 'persp-add-buffer)
 (global-set-key (kbd "<C-up>") 'shrink-window)
@@ -194,8 +183,6 @@ open and unsaved."
 		  (join-line -1)))
 (global-set-key [(tab)] 'smart-tab)
 
-;;; Hooks
-;;---------------------------------------------------------------------------------------
 (add-hook 'after-init-hook #'(lambda ()
 			       (package-initialize)
 			       (install-required-package 'persp-mode)
@@ -203,12 +190,9 @@ open and unsaved."
 			       (install-required-package 'expand-region)))
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-;;; Advices
-;;---------------------------------------------------------------------------------------
 
 
-;;; Custom
-;;--------------------------------------------------------------
+;; ------------------------------------------------------------
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -238,6 +222,3 @@ open and unsaved."
  ;; If there is more than one, they won't work right.
  '(org-hide ((t (:foreground "gray20"))))
  '(sh-heredoc ((t (:foreground "gray" :weight bold)))))
-
-;;; EOF
-;;=======================================================================================
