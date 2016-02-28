@@ -14,10 +14,6 @@
 ;;---------------------------------------------------------------------------------------
 (load "org-mode-confs.el")
 
-;;; Autoload
-;;---------------------------------------------------------------------------------------
-(autoload 'enable-paredit-mode "paredit")
-
 ;;; Modes
 ;;--------------------------------------------------------------
 (with-eval-after-load "persp-mode-autoloads"
@@ -219,10 +215,8 @@ open and unsaved."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (tango-dark)))
- '(emacs-lisp-mode-hook (quote (enable-paredit-mode)))
  '(ido-ignore-buffers (quote ("\\` " "^\\*")))
  '(ido-mode (quote buffer) nil (ido))
- '(lisp-mode-hook (quote (enable-paredit-mode)))
  '(persp-auto-resume-time 0.1)
  '(persp-auto-save-opt 2)
  '(persp-filter-save-buffers-functions
