@@ -2,18 +2,37 @@
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path))
 
+(setq backup-directory-alist '((".*" . "~/.emacs.d/.temp")))
+
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
 			 ("marmalade" . "https://marmalade-repo.org/packages/")
 			 ("melpa" . "http://melpa.milkbox.net/packages/")))
-
-(setq backup-directory-alist '((".*" . "~/.emacs.d/.temp")))
-
-(load "org-mode-confs.el")
 
 (with-eval-after-load "persp-mode-autoloads"
   (setq wg-morph-on nil)
   (add-hook 'after-init-hook #'(lambda ()
 				 (persp-mode 1))))
+
+(setq pkgs-to-install '(paredit persp-mode multiple-cursors expand-region))
+
+(package-initialize)
+(setq package-enable-at-startup nil)
+
+(unless package-archive-contents
+  (package-refresh-contents))
+
+(mapc (lambda (pkg)
+	(unless (package-installed-p pkg)
+	    (progn
+	      (message "Installing %s" pkg)
+	      (package-install pkg))))
+      pkgs-to-install)
+
+(add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(load "org-mode-confs.el")
+
 (column-number-mode)
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
@@ -97,10 +116,6 @@
   "Insert date at point."
   (insert (format-time-string "%d/%m/%y-%R")))
 
-(defun install-required-package (pkg)
-  (if (null (package-installed-p pkg))
-      (package-install pkg)))
-
 (defun mrc-dired-do-command (command)
   "Run COMMAND on marked files. Any files not already open will be opened.
 After this command has been run, any buffers it's modified will remain
@@ -182,13 +197,6 @@ open and unsaved."
 		  (interactive)
 		  (join-line -1)))
 (global-set-key [(tab)] 'smart-tab)
-
-(add-hook 'after-init-hook #'(lambda ()
-			       (package-initialize)
-			       (install-required-package 'persp-mode)
-			       (install-required-package 'multiple-cursors)
-			       (install-required-package 'expand-region)))
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 
 
