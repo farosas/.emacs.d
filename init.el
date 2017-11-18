@@ -34,11 +34,16 @@
 (load "org-mode-confs.el")
 
 (column-number-mode)
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
+(if (display-graphic-p)
+    (progn
+      (scroll-bar-mode -1)
+      (tool-bar-mode -1)
+      (fringe-mode 0)
+      )
+    )
 (menu-bar-mode -1)
 (show-paren-mode)
-(fringe-mode 0)
+
 (global-subword-mode 1)
 
 (setq auto-save-default nil)
@@ -185,9 +190,11 @@ open and unsaved."
 (global-set-key (kbd "C-c mi") 'mc/insert-numbers)
 (global-set-key (kbd "C-c rr") 'mc/reverse-regions)
 (global-set-key (kbd "C-=") 'er/expand-region)
-(global-set-key (vector (list 'control mouse-wheel-down-event)) 'zoom-frm-in)
-(global-set-key (vector (list 'control mouse-wheel-up-event))   'zoom-frm-out)
-(global-set-key (kbd "C-c C-z") 'zoom-frm-unzoom)
+(if (display-graphic-p)
+    (progn
+      (global-set-key (vector (list 'control mouse-wheel-down-event)) 'zoom-frm-in)
+      (global-set-key (vector (list 'control mouse-wheel-up-event))   'zoom-frm-out)
+      (global-set-key (kbd "C-c C-z") 'zoom-frm-unzoom)))
 (global-set-key (kbd "C-c C-e") 'eval-and-replace)
 (global-set-key [(control h)] 'delete-backward-char)
 (global-set-key [(super h)] 'help-command)
