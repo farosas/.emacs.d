@@ -176,6 +176,22 @@ open and unsaved."
   (goto-char (point-min))
   (while (search-forward "\n" nil t) (replace-match "\r\n")))
 
+(defun repo-root (dir)
+  (if (string= "/" (if (tramp-tramp-file-p default-directory)
+		       (tramp-file-name-localname (tramp-dissect-file-name dir))
+		     dir))
+      default-directory
+    (if (file-exists-p (expand-file-name ".git/" dir))
+        dir
+      (repo-root (expand-file-name "../" dir)))))
+
+(defun fgrep ()
+  (interactive)
+  (grep-compute-defaults)
+  (rgrep (grep-read-regexp) "*.[chS]*" (repo-root default-directory)))
+
+(defalias 'grep 'fgrep)
+
 ;; key bindings
 (global-set-key (kbd "C-x p p") 'persp-switch)
 (global-set-key (kbd "C-x p a") 'persp-add-buffer)
