@@ -11,7 +11,9 @@
 (with-eval-after-load "persp-mode-autoloads"
   (setq wg-morph-on nil)
   (add-hook 'after-init-hook #'(lambda ()
-				 (persp-mode 1))))
+                                 (progn
+                                   (persp-mode 1)
+                                   (setq persp-add-buffer-on-after-change-major-mode t)))))
 
 (setq pkgs-to-install '(paredit persp-mode multiple-cursors expand-region))
 
@@ -53,9 +55,15 @@
 (setq comment-style 'multi-line)
 (setq comment-style 'extra-line)
 (setq tramp-default-method "ssh")
-(add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil))
+(setq backup-enable-predicate
+      (lambda (name)
+	(not (file-remote-p name))))
+(setq tramp-ssh-controlmaster-options
+      (concat
+       "-o ControlMaster=auto -o ControlPersist=yes"))
+(setq tramp-verbose 1)
 (setq persp-is-ibc-as-f-supported t)
-(add-to-list 'default-frame-alist '(font . "monospace-12"))
+(add-to-list 'default-frame-alist '(font . "monospace-11"))
 (add-to-list 'default-frame-alist '(fullscreen . fullboth))
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (put 'narrow-to-region 'disabled nil)
@@ -71,6 +79,8 @@
 (setq scroll-step 1)
 (setq hscroll-margin 1)
 (setq hscroll-step 1)
+(setq groovy-indent-offset 2)
+(setq etags-table-search-up-depth 10)
 
 ;; macros
 (fset 'breakpoint
@@ -150,20 +160,19 @@ open and unsaved."
 		   name (file-name-nondirectory new-name)))))))
 
 (defun smart-tab ()
-  "This smart tab is minibuffer compliant: it acts as usual in
-    the minibuffer. Else, if mark is active, indents region. Else if
-    point is at the end of a symbol, expands it. Else indents the
-    current line."
+  ;; TODO: make this a list of functions
   (interactive)
   (if (minibufferp)
-      (unless (minibuffer-complete)
-        (dabbrev-expand nil))
-    (if mark-active
-        (indent-region (region-beginning)
-                       (region-end))
-      (if (looking-at "\\_>")
-          (dabbrev-expand nil)
-        (indent-for-tab-command)))))
+      (minibuffer-complete)
+      (if mark-active
+	  (indent-region (region-beginning)
+			 (region-end))
+	(if (and (bound-and-true-p go-mode)
+		 (bound-and-true-p auto-complete-mode))
+	    (ac-complete-go)
+	  (if (looking-at "\\_>")
+	      (dabbrev-expand nil)
+	    (indent-for-tab-command))))))
 
 (defun uncamelcase ()
   (interactive)
@@ -218,9 +227,13 @@ open and unsaved."
 (global-set-key (kbd "M-j")
 		(lambda ()
 		  (interactive)
-		  (join-line -1)))
+		  (join-line -1)
+		  (beginning-of-line)))
 (global-set-key [(tab)] 'smart-tab)
-
+(global-set-key (kbd "C-M-.") 'xref-find-definitions-other-window)
+(global-set-key (kbd "M-s M-.") 'xref-find-references)
+(global-set-key (kbd "M-s C-s") 'isearch-forward-symbol-at-point)
+(global-set-key (kbd "<f5>") '(lambda () (interactive) (revert-buffer nil t)))
 
 
 ;; ------------------------------------------------------------
@@ -230,16 +243,37 @@ open and unsaved."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (tango-dark)))
+ '(etags-table-search-up-depth 15)
  '(ido-ignore-buffers (quote ("\\` " "^\\*")))
  '(ido-mode (quote buffer) nil (ido))
+ '(package-selected-packages
+   (quote
+    (dash s cask dumb-jump xcscope etags-table ggtags go-guru go-eldoc auto-complete groovy-mode dtrt-indent yaml-mode zoom-frm expand-region multiple-cursors persp-mode paredit)))
  '(persp-auto-resume-time 0.1)
  '(persp-auto-save-opt 2)
  '(persp-filter-save-buffers-functions
    (quote
-    ((lambda (b) (string-prefix-p " " (buffer-name b)))
-     (lambda (b) (string-prefix-p "*" (buffer-name b)))
-     (lambda (b) (string-prefix-p "/ssh" (buffer-name b))))))
+    ((lambda
+       (b)
+       (string-prefix-p " "
+			(buffer-name b)))
+     (lambda
+       (b)
+       (string-prefix-p "*"
+			(buffer-name b)))
+     (lambda
+       (b)
+       (string-prefix-p "/ssh"
+			(buffer-name b))))))
+ '(persp-set-ido-hooks t)
  '(read-file-name-completion-ignore-case t)
+ '(safe-local-variable-values
+   (quote
+    ((eval c-set-offset
+	   (quote innamespace)
+	   0)
+     (c-indent-level . 4))))
+ '(tab-stop-list (quote (4 8 12 16 20 24 28 32 36)))
  '(tab-width 8)
  '(vc-handled-backends nil)
  '(web-mode-extra-snippets (quote ((nil ("slide" "<section>

@@ -5,11 +5,11 @@
 ;; Show blocked items in a dimmed font
 (setq org-agenda-dim-blocked-tasks t)
 
-(setq org-clock-in-switch-to-state "DOING")
+(setq org-clock-in-switch-to-state "WORKING")
 
 (setq org-x11idle-exists-p t)
 (setq org-clock-x11idle-program-name "/usr/local/bin/xprintidle")
-(setq org-clock-idle-time 15)
+(setq org-clock-idle-time 20)
 
 (setq org-log-into-drawer t)
 (setq org-clock-into-drawer t)
@@ -44,7 +44,7 @@
 	(split-window)
 	(funcall fun)))
 
-(global-set-key (kbd "<f5>") 'toggle-tasks-file)
+(global-set-key (kbd "<f4>") 'toggle-tasks-file)
 
 (add-hook 'org-mode-hook
 		  (lambda ()
