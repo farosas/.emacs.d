@@ -9,8 +9,7 @@
 (setq backup-directory-alist '((".*" . "~/.emacs.d/.temp")))
 
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-			 ("marmalade" . "https://marmalade-repo.org/packages/")
-			 ("melpa" . "http://melpa.milkbox.net/packages/")))
+			 ("melpa" . "https://melpa.org/packages/")))
 
 (with-eval-after-load "persp-mode-autoloads"
   (setq wg-morph-on nil)
