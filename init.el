@@ -15,6 +15,7 @@
   (setq wg-morph-on nil)
   (add-hook 'after-init-hook #'(lambda ()
                                  (progn
+				   (require 'tramp)
                                    (persp-mode 1)
                                    (setq persp-add-buffer-on-after-change-major-mode t)))))
 
