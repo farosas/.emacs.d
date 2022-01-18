@@ -268,6 +268,24 @@ open and unsaved."
 
 (global-set-key (kbd "M-s M-.") 'tags-xref-asm)
 
+;; per-project xref marker stack
+(setq project-xref-marker-alist '())
+(setq xref--marker-ring nil)
+
+(defun set-project-xref-marker-ring (&optional a b c)
+  (add-to-list 'project-xref-marker-alist
+	       `(,(project-name) . ,(make-ring xref-marker-ring-length))
+	       nil
+	       #'(lambda (elem1 elem2) (equal (car elem1) (car elem2))))
+  (setq xref--marker-ring
+	(cdr (assoc (project-name) project-xref-marker-alist))))
+
+;;(advice-add 'switch-to-buffer :after #'set-project-xref-marker-ring)
+(add-hook 'find-file-hook 'set-project-xref-marker-ring)
+(add-hook 'window-configuration-change-hook 'set-project-xref-marker-ring)
+;;(remove-hook 'window-configuration-change-hook 'set-project-xref-marker-ring)
+;;
+
 
 ;; ------------------------------------------------------------
 (custom-set-variables
