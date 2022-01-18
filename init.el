@@ -76,7 +76,9 @@
 	(not (file-remote-p name))))
 (setq tramp-ssh-controlmaster-options
       (concat
-       "-o ControlMaster=auto -o ControlPersist=yes"))
+       "-o ControlPath=/tmp/ssh-ControlPath-%%r@%%h:%%p "
+       "-o ControlMaster=auto -o ControlPersist=no"))
+
 (setq tramp-verbose 1)
 (setq persp-is-ibc-as-f-supported t)
 (add-to-list 'default-frame-alist '(font . "monospace-12"))
@@ -97,6 +99,15 @@
 (setq hscroll-step 1)
 (setq groovy-indent-offset 2)
 (setq etags-table-search-up-depth 10)
+(setq Buffer-menu-name-width 40)
+
+(setq clean-buffer-list-kill-regexps '(
+				       ("\\*Customize .*\\*" . 0)
+				       ("\\*Annotate .*\\*" . 0)
+				       ("\\*Completions.*\\*\\'" . 0)
+				       ("\\*vc-change.*" . 0)
+				       ("\\*unsent mail.*" . 0)
+				       ))
 
 ;; macros
 (fset 'breakpoint
@@ -105,6 +116,9 @@
 	(kmacro-exec-ring-item
 	 (quote ([15 105 109 112 111 114 116 32 112 100 98 59 32 112 100 98 46 115 101 116 95 116 114 97 99 101 40 41 1] 0 "%d"))
 	 arg)))
+
+(fset 'pr
+      (kmacro-lambda-form [?p ?r ?i ?n ?t ?k ?\( ?K ?E ?R ?N ?_ ?E ?R ?R ?  ?\" ?% ?s ?: ?  ?\\ ?n ?\" ?, ?  ?_ ?_ ?f ?u ?n ?c ?_ ?_ ?\) ?\; ?\M-b ?\M-b ?\C-b] 0 "%d"))
 
 ;; functions
 (defun copy-file-name-to-clipboard ()
@@ -146,6 +160,10 @@
 (defun insert-date ()
   "Insert date at point."
   (insert (format-time-string "%d/%m/%y-%R")))
+
+(defun hex()
+  (interactive)
+  (print (format "0x%x" (thing-at-point 'number))))
 
 (defun mrc-dired-do-command (command)
   "Run COMMAND on marked files. Any files not already open will be opened.
@@ -234,6 +252,8 @@ open and unsaved."
 ;; key bindings
 (global-set-key (kbd "C-x p p") 'persp-switch)
 (global-set-key (kbd "C-x p a") 'persp-add-buffer)
+(global-set-key (kbd "C-M-n") 'persp-next)
+(global-set-key (kbd "C-M-p") 'persp-prev)
 (global-set-key (kbd "<C-up>") 'shrink-window)
 (global-set-key (kbd "<C-down>") 'enlarge-window)
 (global-set-key (kbd "<C-left>") 'shrink-window-horizontally)
@@ -261,9 +281,15 @@ open and unsaved."
 		  (beginning-of-line)))
 (global-set-key [(tab)] 'smart-tab)
 (global-set-key (kbd "C-M-.") 'xref-find-definitions-other-window)
-(global-set-key (kbd "M-s M-.") 'xref-find-references)
-(global-set-key (kbd "M-s C-s") 'isearch-forward-symbol-at-point)
+(global-set-key (kbd "C--") 'isearch-forward-symbol-at-point)
 (global-set-key (kbd "<f5>") '(lambda () (interactive) (revert-buffer nil t)))
+(global-set-key (kbd "C-M-m") 'show-marks)
+(global-set-key (kbd "C-x z") 'zoom-window-zoom)
+(global-set-key (kbd "C-x x") 'point-to-register)
+(global-set-key (kbd "C-x j") 'jump-to-register)
+(global-set-key (kbd "M-`") 'other-frame)
+
+
 (defun tags-xref-asm (identifier)
   (interactive (list (xref--read-identifier "Find asm definition of: ")))
   (progn
@@ -362,6 +388,9 @@ open and unsaved."
 (global-set-key (kbd "C-x w") 'write-alternate-file-other-path)
 ;;
 
+;; for ido
+;; This function is slow. Can't be bothered.
+(defun ido-ignore-item-p (name re-list &optional ignore-ext) 0)
 
 ;; ------------------------------------------------------------
 (custom-set-variables
@@ -369,18 +398,20 @@ open and unsaved."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (tango-dark)))
+ '(custom-enabled-themes '(tango-dark))
+ '(describe-char-unidata-list
+   '(name old-name general-category canonical-combining-class bidi-class decomposition decimal-digit-value digit-value numeric-value mirrored iso-10646-comment uppercase lowercase titlecase))
+ '(dtrt-indent-mode t nil (dtrt-indent))
  '(etags-table-search-up-depth 15)
- '(ido-ignore-buffers (quote ("\\` " "^\\*")))
- '(ido-mode (quote buffer) nil (ido))
+ '(ido-ignore-buffers '("\\` " "^\\*"))
+ '(ido-mode 'buffer nil (ido))
+ '(imenu-list-size 0.17)
  '(package-selected-packages
-   (quote
-    (dash s cask dumb-jump xcscope etags-table ggtags go-guru go-eldoc auto-complete groovy-mode dtrt-indent yaml-mode zoom-frm expand-region multiple-cursors persp-mode paredit)))
+   '(ccls dash-functional lsp-mode zoom-window markdown-mode+ markdown-preview-mode go-mode show-marks gnu-elpa-keyring-update ansi shut-up epl git commander f systemtap-mode imenu-list htmlize dash s cask xcscope etags-table ggtags auto-complete dtrt-indent yaml-mode zoom-frm expand-region multiple-cursors persp-mode paredit))
  '(persp-auto-resume-time 0.1)
  '(persp-auto-save-opt 2)
  '(persp-filter-save-buffers-functions
-   (quote
-    ((lambda
+   '((lambda
        (b)
        (string-prefix-p " "
 			(buffer-name b)))
@@ -391,22 +422,24 @@ open and unsaved."
      (lambda
        (b)
        (string-prefix-p "/ssh"
-			(buffer-name b))))))
+			(buffer-name b)))))
  '(persp-set-ido-hooks t)
  '(read-file-name-completion-ignore-case t)
  '(safe-local-variable-values
-   (quote
-    ((eval c-set-offset
-	   (quote innamespace)
-	   0)
-     (c-indent-level . 4))))
- '(tab-stop-list (quote (4 8 12 16 20 24 28 32 36)))
+   '(`(xref--marker-ring \,
+			 (project-xref-marker-ring))
+     (eval when
+	   (fboundp 'c-toggle-comment-style)
+	   (c-toggle-comment-style 1))
+     (eval c-set-offset 'innamespace 0)
+     (c-indent-level . 4)))
+ '(tab-stop-list '(4 8 12 16 20 24 28 32 36))
  '(tab-width 8)
- '(vc-handled-backends nil)
- '(web-mode-extra-snippets (quote ((nil ("slide" "<section>
+ '(vc-git-print-log-follow t)
+ '(web-mode-extra-snippets '((nil ("slide" "<section>
 " . "
-</section>"))))))
-
+</section>"))))
+ '(zoom-window-use-persp t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
