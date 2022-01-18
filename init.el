@@ -207,6 +207,10 @@ open and unsaved."
       (isearch-yank-string region))))
 (add-hook 'isearch-mode-hook #'isearch-with-region)
 
+(require 'grep)
+(add-to-list 'grep-find-ignored-directories ".ccls-cache")
+(add-to-list 'grep-find-ignored-directories  "build")
+(setq grep-save-buffers nil)
 (defun fgrep ()
   (interactive)
   (grep-compute-defaults)
