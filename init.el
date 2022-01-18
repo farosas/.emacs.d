@@ -19,7 +19,7 @@
                                    (persp-mode 1)
                                    (setq persp-add-buffer-on-after-change-major-mode t)))))
 
-(setq pkgs-to-install '(paredit persp-mode multiple-cursors expand-region))
+(setq pkgs-to-install '(paredit persp-mode multiple-cursors expand-region imenu-list eglot))
 
 (package-initialize)
 (setq package-enable-at-startup nil)
@@ -34,8 +34,18 @@
 	      (package-install pkg))))
       pkgs-to-install)
 
+
+(defun c-mode-disables ()
+  (auto-revert-mode -1)
+  (flymake-mode -1)
+  (eldoc-mode -1)
+  (cscope-minor-mode)
+  (abbrev-mode -1))
+
 (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'c-mode-hook 'c-mode-disables)
+(add-hook 'find-file-hook 'c-mode-disables)
 
 (load "org-mode-confs.el")
 
@@ -50,6 +60,8 @@
 (menu-bar-mode -1)
 (show-paren-mode)
 
+(global-auto-revert-mode -1)
+(global-eldoc-mode -1)
 (global-subword-mode 1)
 
 (setq auto-save-default nil)
@@ -268,6 +280,30 @@ open and unsaved."
 
 (global-set-key (kbd "M-s M-.") 'tags-xref-asm)
 
+;; for eglot
+(require 'project)
+(require 'eglot)
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-stay-out-of 'imenu)
+  (add-to-list 'eglot-stay-out-of 'eldoc)
+  (add-to-list 'eglot-stay-out-of 'flymake))
+
+(defun project-root (project)
+  (car (project-roots project)))
+
+(defun project-name ()
+  (project-root (project-current)))
+
+;; ;; eglot iterates over buffer-list and some of the function it calls
+;; ;; hang on tramp buffers
+;; ;; (defun filter-tramp-buffers (l)
+;; ;;   (mapcar
+;; ;;    (lambda (x)
+;; ;;      (with-current-buffer x (when (not (tramp-tramp-file-p default-directory)) x))
+;; ;;      )
+;; ;;    l))
+;; ;;
+
 ;; per-project xref marker stack
 (setq project-xref-marker-alist '())
 (setq xref--marker-ring nil)
@@ -336,5 +372,7 @@ open and unsaved."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(eglot-mode-line ((t nil)))
+ '(highlight ((t (:background "gray20" :foreground "white"))))
  '(org-hide ((t (:foreground "gray20"))))
  '(sh-heredoc ((t (:foreground "gray" :weight bold)))))
