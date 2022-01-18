@@ -63,7 +63,7 @@
        "-o ControlMaster=auto -o ControlPersist=yes"))
 (setq tramp-verbose 1)
 (setq persp-is-ibc-as-f-supported t)
-(add-to-list 'default-frame-alist '(font . "monospace-11"))
+(add-to-list 'default-frame-alist '(font . "monospace-12"))
 (add-to-list 'default-frame-alist '(fullscreen . fullboth))
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (put 'narrow-to-region 'disabled nil)
