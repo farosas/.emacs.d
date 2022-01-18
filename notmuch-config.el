@@ -47,9 +47,17 @@
 (setq hscroll-margin 1)
 (setq hscroll-step 1)
 
+(defun extract-patch (dir)
+  (interactive "Ddir: ")
+  (let ((id (notmuch-show-get-message-id t)))
+    ;; https://github.com/aaptel/notmuch-extract-patch
+    (shell-command (format "notmuch-extract-patch %s > %s"
+                           (shell-quote-argument (notmuch-id-to-query id))
+                           (shell-quote-argument (concat (expand-file-name dir) id ".patch"))))))
+
 (defun apply-thread-patchset (repo branch)
   (interactive "Dgit repo: \nsnew branch name: ")
-  (let ((tid notmuch-show-thread-id)
+  (let ((tid (notmuch-search-find-thread-id))
     (tmp "/tmp/notmuch-patchset"))
     ;; https://github.com/aaptel/notmuch-extract-patch
     (shell-command (format "notmuch-extract-patch %s > %s && ( cd %s && git checkout -b %s && git am %s )"
