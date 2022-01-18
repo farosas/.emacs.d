@@ -197,6 +197,16 @@ open and unsaved."
         dir
       (repo-root (expand-file-name "../" dir)))))
 
+(defun isearch-with-region ()
+  "Use region as the isearch text."
+  (when mark-active
+    (let ((region (funcall region-extract-function nil)))
+      (goto-char (region-end))
+      (deactivate-mark)
+      (isearch-update)
+      (isearch-yank-string region))))
+(add-hook 'isearch-mode-hook #'isearch-with-region)
+
 (defun fgrep ()
   (interactive)
   (grep-compute-defaults)
