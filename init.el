@@ -2,6 +2,10 @@
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path))
 
+(let ((default-directory "~/.emacs.d/elpa"))
+  (normal-top-level-add-to-load-path '("."))
+  (normal-top-level-add-subdirs-to-load-path))
+
 (setq backup-directory-alist '((".*" . "~/.emacs.d/.temp")))
 
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
