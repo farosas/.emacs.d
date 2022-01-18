@@ -252,6 +252,21 @@ open and unsaved."
 (global-set-key (kbd "M-s M-.") 'xref-find-references)
 (global-set-key (kbd "M-s C-s") 'isearch-forward-symbol-at-point)
 (global-set-key (kbd "<f5>") '(lambda () (interactive) (revert-buffer nil t)))
+(defun tags-xref-asm (identifier)
+  (interactive (list (xref--read-identifier "Find asm definition of: ")))
+  (progn
+    (xref-etags-mode)
+    (xref--find-definitions identifier nil)))
+
+(defun tags-xref-asm-return-hook ()
+  (let ((mode (buffer-local-value 'major-mode (current-buffer))))
+    (if (and (not xref-etags-mode--saved) (string= mode "c-mode"))
+	(xref-etags-mode))))
+
+(require 'xref)
+;;(add-to-list 'xref-after-return-hook 'tags-xref-asm-return-hook)
+
+(global-set-key (kbd "M-s M-.") 'tags-xref-asm)
 
 
 ;; ------------------------------------------------------------
