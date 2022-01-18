@@ -322,6 +322,46 @@ open and unsaved."
 ;;(remove-hook 'window-configuration-change-hook 'set-project-xref-marker-ring)
 ;;
 
+;; {write,find}-alternate-file-other-path
+(require 's)
+(setq alternate-file-local-path "~/kvm/")
+(setq alternate-file-remote-path "/ssh::")
+
+(defmacro alternate-file-interactive (str)
+  `(interactive
+    (let* ((local-path alternate-file-local-path)
+	   (remote-path alternate-file-remote-path)
+	   (other-path (if (tramp-tramp-file-p default-directory)
+			   local-path remote-path)))
+      (list (read-from-minibuffer (concat ,str " alternate path: ") other-path nil nil other-path nil)))))
+
+(defun find-alternate-file-other-path (otherpath)
+  (alternate-file-interactive "Find")
+  (alternate-file-other-path #'find-file otherpath))
+
+(defun write-alternate-file-other-path (otherpath)
+  (alternate-file-interactive "Write")
+  (alternate-file-other-path #'write-file otherpath))
+
+(defvar point-pos nil)
+(defun update-point ()
+  (interactive)
+  (goto-char point-pos))
+(global-set-key (kbd "C-M-g") 'update-point)
+
+(defun alternate-file-other-path (fn otherpath)
+  (setq point-pos (point))
+  (let* ((root-path (if (tramp-tramp-file-p default-directory)
+			(repo-root default-directory)
+		      (projectile-project-root default-directory)))
+	 (root-dir (directory-file-name root-path))
+	 (root-dir-name (file-name-nondirectory root-dir)))
+    (funcall fn (s-replace root-dir (concat otherpath root-dir-name) buffer-file-name))))
+
+(global-set-key (kbd "C-x v") 'find-alternate-file-other-path)
+(global-set-key (kbd "C-x w") 'write-alternate-file-other-path)
+;;
+
 
 ;; ------------------------------------------------------------
 (custom-set-variables
