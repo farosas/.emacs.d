@@ -127,7 +127,17 @@
 (fset 'pr
       (kmacro-lambda-form [?p ?r ?i ?n ?t ?k ?\( ?K ?E ?R ?N ?_ ?E ?R ?R ?  ?\" ?% ?s ?: ?  ?\\ ?n ?\" ?, ?  ?_ ?_ ?f ?u ?n ?c ?_ ?_ ?\) ?\; ?\M-b ?\M-b ?\C-b] 0 "%d"))
 
+(fset 'new-week
+	  (kmacro-lambda-form [C-return ?\C-u ?\M-! ?d ?a ?t ?e return ?\C-n ?\C-a ?\C-s ?# ?t ?e ?m ?p ?l ?a ?t ?e ?\C-n ?\C-a ?\C-  ?\C-s ?# ?\C-a ?\M-w ?\C-u ?\C-  ?\C-u ?\C-  ?\C-y ?\C-p ?\C-k] 0 "%d"))
+
 ;; functions
+(defun org-new-week ()
+  (interactive)
+  (progn
+    (remove-hook 'isearch-mode-hook #'isearch-with-region)
+    (execute-kbd-macro (new-week))
+    (add-hook 'isearch-mode-hook #'isearch-with-region)))
+
 (defun copy-file-name-to-clipboard ()
   "Copy the current buffer file name to the clipboard."
   (interactive)
