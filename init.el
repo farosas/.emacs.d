@@ -257,6 +257,13 @@ open and unsaved."
       (isearch-update)
       (isearch-yank-string region))))
 (add-hook 'isearch-mode-hook #'isearch-with-region)
+;;(remove-hook 'isearch-mode-hook #'isearch-with-region)
+
+(defun toggle-search-with-region ()
+  (interactive)
+  (if (eq (car isearch-mode-hook) 'isearch-with-region)
+      (remove-hook 'isearch-mode-hook #'isearch-with-region)
+    (add-hook 'isearch-mode-hook #'isearch-with-region)))
 
 (require 'grep)
 (add-to-list 'grep-find-ignored-directories ".ccls-cache")
