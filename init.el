@@ -268,11 +268,14 @@ open and unsaved."
 (require 'grep)
 (add-to-list 'grep-find-ignored-directories ".ccls-cache")
 (add-to-list 'grep-find-ignored-directories  "build")
+(add-to-list 'grep-find-ignored-directories  "drivers")
 (setq grep-save-buffers nil)
 (defun fgrep ()
   (interactive)
-  (grep-compute-defaults)
-  (rgrep (grep-read-regexp) "*.[chS]*" (repo-root default-directory)))
+  (if (tramp-tramp-file-p default-directory)
+      (print "No! This is a tramp buffer.")
+      (grep-compute-defaults)
+    (rgrep (grep-read-regexp) "*.[chS]*" (repo-root default-directory))))
 
 (defalias 'grep 'fgrep)
 
