@@ -311,6 +311,8 @@ open and unsaved."
 		  (beginning-of-line)))
 (global-set-key [(tab)] 'smart-tab)
 (global-set-key (kbd "C-M-.") 'xref-find-definitions-other-window)
+(add-hook 'xref-mode-hook
+          (lambda () (local-set-key (kbd "RET") #'xref-quit-and-goto-xref)))
 (global-set-key (kbd "C--") 'isearch-forward-symbol-at-point)
 (global-set-key (kbd "<f5>") '(lambda () (interactive) (revert-buffer nil t)))
 (global-set-key (kbd "C-M-m") 'show-marks)
@@ -345,7 +347,7 @@ open and unsaved."
   (add-to-list 'eglot-stay-out-of 'flymake))
 
 (defun project-root (project)
-  (car (project-roots project)))
+  (car (list (cdr project))))
 
 (defun project-name ()
   (project-root (project-current)))
@@ -360,23 +362,51 @@ open and unsaved."
 ;; ;;    l))
 ;; ;;
 
-;; per-project xref marker stack
-(setq project-xref-marker-alist '())
-(setq xref--marker-ring nil)
-
-(defun set-project-xref-marker-ring (&optional a b c)
-  (add-to-list 'project-xref-marker-alist
-	       `(,(project-name) . ,(make-ring xref-marker-ring-length))
-	       nil
-	       #'(lambda (elem1 elem2) (equal (car elem1) (car elem2))))
-  (setq xref--marker-ring
-	(cdr (assoc (project-name) project-xref-marker-alist))))
-
-;;(advice-add 'switch-to-buffer :after #'set-project-xref-marker-ring)
-(add-hook 'find-file-hook 'set-project-xref-marker-ring)
-(add-hook 'window-configuration-change-hook 'set-project-xref-marker-ring)
+;; per-project xref marker stack (pre 29.1)
+;;;;(setq project-xref-marker-alist '())
+;;;;(setq xref--marker-ring nil)
+;;;;
+;;;;(defun set-project-xref-marker-ring (&optional a b c)
+;;;;  (add-to-list 'project-xref-marker-alist
+;;;;	       `(,(project-name) . ,(make-ring xref-marker-ring-length))
+;;;;	       nil
+;;;;	       #'(lambda (elem1 elem2) (equal (car elem1) (car elem2))))
+;;;;  (setq xref--marker-ring
+;;;;	(cdr (assoc (project-name) project-xref-marker-alist))))
+;;;;
+;;;;;;(advice-add 'switch-to-buffer :after #'set-project-xref-marker-ring)
+;;;;(add-hook 'find-file-hook 'set-project-xref-marker-ring)
+;;;;(add-hook 'window-configuration-change-hook 'set-project-xref-marker-ring)
 ;;(remove-hook 'window-configuration-change-hook 'set-project-xref-marker-ring)
 ;;
+
+;; maybe project.el has some place we could store this?
+(setq project-xref-history-alist '())
+
+;; cache the last project in case we jump into a system header which
+;; would not have a project-name.
+(setq lru-project nil)
+
+(defun xref-window-project-history (&optional new-value)
+  "Return per-project xref history.
+
+Override existing value with NEW-VALUE if NEW-VALUE is set."
+  (let* ((current-project (or (project-name) lru-project))
+	 (elm (assoc current-project project-xref-history-alist))
+	 (history (or (cdr elm) (xref--make-xref-history))))
+    (if (not (cdr elm))
+	 (add-to-list 'project-xref-history-alist
+		      `(,current-project . ,history)
+		      nil
+		      #'(lambda (elem1 elem2)
+			  (equal (car elem1) (car elem2))))
+      (if new-value (setcdr elm new-value)))
+    (setq lru-project current-project)
+    (cdr (assoc current-project project-xref-history-alist))))
+
+;; Customize -> xref -> Xref History Storage
+(setq xref-history-storage #'xref-window-project-history)
+
 
 ;; {write,find}-alternate-file-other-path
 (require 's)
