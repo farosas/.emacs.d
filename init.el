@@ -11,13 +11,14 @@
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
 			 ("melpa" . "https://melpa.org/packages/")))
 
-(with-eval-after-load "persp-mode-autoloads"
-  (setq wg-morph-on nil)
-  (add-hook 'after-init-hook #'(lambda ()
-                                 (progn
-				   (require 'tramp)
-                                   (persp-mode 1)
-                                   (setq persp-add-buffer-on-after-change-major-mode t)))))
+(if (display-graphic-p)
+    (with-eval-after-load "persp-mode-autoloads"
+      (setq wg-morph-on nil)
+      (add-hook 'after-init-hook #'(lambda ()
+                                     (progn
+				       (require 'tramp)
+                                       (persp-mode 1)
+                                       (setq persp-add-buffer-on-after-change-major-mode t))))))
 
 (setq pkgs-to-install '(paredit persp-mode multiple-cursors expand-region imenu-list eglot))
 
