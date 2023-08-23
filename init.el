@@ -25,6 +25,12 @@
 (package-initialize)
 (setq package-enable-at-startup nil)
 
+(setq vc-ignore-dir-regexp
+      (format "\\(%s\\)\\|\\(%s\\)"
+              vc-ignore-dir-regexp
+              tramp-file-name-regexp))
+(setq vc-handled-backends '(Git))
+
 (unless package-archive-contents
   (package-refresh-contents))
 
@@ -392,6 +398,12 @@ open and unsaved."
 ;; for ido
 ;; This function is slow. Can't be bothered.
 (defun ido-ignore-item-p (name re-list &optional ignore-ext) 0)
+
+;; adds the --pretty option to show the commit in 'reference' format
+;; at vc-git-print-log:
+;; (when (numberp limit)
+;;   (list "-n" (format "%s" limit)
+;;	   "--pretty=tformat:%C(auto)%h (\"%s\")%nAuthor: %an <%ae>%nDate:   %ad%n%n%w(0,4,4)%B"))
 
 ;; ------------------------------------------------------------
 (custom-set-variables
