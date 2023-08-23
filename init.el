@@ -468,6 +468,8 @@ Override existing value with NEW-VALUE if NEW-VALUE is set."
  '(describe-char-unidata-list
    '(name old-name general-category canonical-combining-class bidi-class decomposition decimal-digit-value digit-value numeric-value mirrored iso-10646-comment uppercase lowercase titlecase))
  '(dtrt-indent-mode t nil (dtrt-indent))
+ '(eglot-ignored-server-capabilities
+   '(:hoverProvider :completionProvider :signatureHelpProvider :documentHighlightProvider :documentSymbolProvider :workspaceSymbolProvider :codeActionProvider :codeLensProvider :documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :renameProvider :colorProvider :foldingRangeProvider :executeCommandProvider))
  '(etags-table-search-up-depth 15)
  '(ido-ignore-buffers '("\\` " "^\\*"))
  '(ido-mode 'buffer nil (ido))
